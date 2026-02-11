@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub Repositories</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>GitHub Repository List</h2>
+
+Enter GitHub Username:
+<input type="text" id="username">
+<button onclick="getRepos()">Get Repositories</button>
+
+<br><br>
+
+<table id="repoTable">
+    <tr>
+        <th>Repository Name</th>
+        <th>Description</th>
+        <th>URL</th>
+    </tr>
+</table>
+
+<script>
+function getRepos() {
+    var username = document.getElementById("username").value;
+    var url = "https://api.github.com/users/" + username + "/repos";
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var repos = JSON.parse(xhr.responseText);
+            var table = document.getElementById("repoTable");
+
+            // Clear previous rows except header
+            table.innerHTML = "<tr><th>Repository Name</th><th>Description</th><th>URL</th></tr>";
+
+            for (var i = 0; i < repos.length; i++) {
+                var row = table.insertRow();
+                row.insertCell(0).innerHTML = repos[i].name;
+                row.insertCell(1).innerHTML = repos[i].description || "No Description";
+                row.insertCell(2).innerHTML = "<a href='" + repos[i].html_url + "' target='_blank'>Visit</a>";
+            }
+        } else {
+            alert("User not found!");
+        }
+    };
+
+    xhr.send();
+}
+</script>
+
+</body>
+</html>
